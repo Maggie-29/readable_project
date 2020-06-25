@@ -31,8 +31,11 @@ def recreateTable():
 #录入书名人名的函数  for 1 & 2
 def recordBooks():
     while True:
-        print('Please scan a book sticker first.')
+        print("Please scan a book sticker first. Please finish in 15 seconds or you will go back to the main menu.")
         bookuid = RFIDread.read()
+        if bookuid == -1:
+            returnValue = 'You have quitted.'
+            break
         whetherInUsers = PERSONNAME.checkRepetition(bookuid)
         if whetherInUsers > 0:
             print("Sorry, please don't scan a user card.")
@@ -45,20 +48,25 @@ def recordBooks():
             bookname = input('Please enter the name of the book: ')
             author = input('Who is the author? ')
             source = input('Where did you hear about this book? ')
-            bookinfo = BOOKNAME.importBooks(uid,bookname,author,source)
+            bookinfo = BOOKNAME.importBooks(bookuid,bookname,author,source)
             print(bookinfo)
+            returnValue = 'You have successfully recorded a book.'
             answer = input("Do you want to add another one? Type 'yes' or 'no' to continue: ")
             if answer == 'yes':
+                returnValue = 'You have successfully recorded those books.'
                 continue
             else:
                 break
-    return('You have successfully recorded the books.')
+    return returnValue
 
 
 def recordUsers():
     while True:
-        print('Please scan a user card first.')
+        print("Please scan a user card first. Please finish in 15 seconds or you will go back to the main menu.")
         useruid = RFIDread.read()
+        if useruid == '-1':
+            returnValue = 'You have quitted.'
+            break
         whetherInBooks = BOOKNAME.checkRepetition(useruid)
         if whetherInBooks > 0:
             print("Sorry, please don't scan a book sticker.")
@@ -69,20 +77,24 @@ def recordUsers():
             continue
         if count == 0:
             personname = input('And then please enter your name: ')
-            userinfo = PERSONNAME.importPeople(uid,personname)
+            userinfo = PERSONNAME.importPeople(useruid,personname)
             print(userinfo)
+            returnValue = 'You have successfully recorded a user.'
             answer = input("Do you want to add another one? Type 'yes' or 'no' to continue: ")
             if answer == 'yes':
                 continue
             else:
                 break
-    return('You have successfully recorded the users.')
+    return returnValue
 
 #借书流程
 def borrowBooks():
     while True:
-        print('Please scan your user card first.')
+        print("Please scan your user card first. Please finish in 15 seconds or you will go back to the main menu.")
         useruid = RFIDread.read()
+        if useruid == -1:
+            returnValue = 'You have quitted.'
+            break
         userInfo = PERSONNAME.seeUser(useruid)
         if userInfo == 0:
             print('Sorry, it is not a properly registered user card.')
@@ -91,8 +103,11 @@ def borrowBooks():
             print('This is your user information: ' + str(userInfo))
             break
     while True:
-        print('Scan the sticker of the book you want to borrow.')
+        print("Scan the sticker of the book you want to borrow. Please finish in 15 seconds or you will go back to the main menu.")
         bookuid = RFIDread.read()
+        if bookuid == -1:
+            returnValue = 'You have quitted.'
+            break
         bookInfo = BOOKNAME.seeBook(bookuid)
         if bookInfo == 0:
             print('Sorry, it is not an available book.')
@@ -111,6 +126,7 @@ def borrowBooks():
                 flag = 1
                 print(BOOKNAME.changeFlag(bookuid,flag))
                 record = allData.borrowBooks(userInfo,bookInfo)
+                returnValue = 'You have successfully borrowed a book.'
                 print(str(record))
                 printer.printLine(record,flag)
                 answer = input("Do you want to borrow another book? Type 'yes' or 'no' to continue: ")
@@ -118,14 +134,17 @@ def borrowBooks():
                     continue
                 else:
                     break
-    return('You have successfully borrowed a book.')
+    return returnValue
 
 
 #还书流程
 def returnBooks():
     while True:
-        print('Please scan your user card first.')
+        print("Please scan your user card first. Please finish in 15 seconds or you will go back to the main menu.")
         useruid = RFIDread.read()
+        if useruid == -1:
+            returnValue = 'You have quitted.'
+            break
         userInfo = PERSONNAME.seeUser(useruid)
         if userInfo == 0:
             print('Sorry, it is not a properly registered user card.')
@@ -134,8 +153,11 @@ def returnBooks():
             print('This is your user information: ' + str(userInfo))
             break
     while True:
-        print('Scan the sticker of the book you want to return.')
+        print("Scan the sticker of the book you want to return. Please finish in 15 seconds or you will go back to the main menu.")
         bookuid = RFIDread.read()
+        if bookuid == -1:
+            returnValue = 'You have quitted.'
+            break
         bookInfo = BOOKNAME.seeBook(bookuid)
         if bookInfo == 0:
             print('Sorry, it is not an available book.')
@@ -157,11 +179,12 @@ def returnBooks():
                 deltatime = allData.Days(record)
                 printer.printLine(record,flag,deltatime=deltatime)
                 answer = input("Do you want to return another book? Type 'yes' or 'no' to continue: ")
+                returnValue = 'You have successfully returned the book.'
                 if answer == 'yes':
                     continue
                 else:
                     break
-    return('You have successfully returned the book.')
+    return returnValue
 
 
 #显示最新的十条记录

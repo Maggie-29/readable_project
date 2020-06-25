@@ -23,7 +23,13 @@ def printLine(record,flag,deltatime=0):
     p._raw(('作者: ' + record[7]).encode('gbk'))  #author
     p._raw('\n')
     p._raw(('推荐来源: ' + record[8]).encode('gbk'))  #referral
-    p.cut('PART')
+    p._raw('\n')
+    p._raw('\n')
+    p._raw('. . . . . . . . . . . . . .')
+    p._raw('\n')
+    p._raw('\n')
+    p._raw('\n')
+    #p.cut('PART')
     
 # p.text(time.asctime( time.localtime(time.time()) )+'\n')
 # s = '造旅馆的人'
